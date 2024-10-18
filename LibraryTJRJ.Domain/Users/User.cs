@@ -22,4 +22,10 @@ public class User : Entity
     private User()
     {
     }
+
+    public static User Create(string firstName, string lastName, string email)
+    {
+        return new(Guid.NewGuid(), firstName, lastName, email);
+    }
+
 }
