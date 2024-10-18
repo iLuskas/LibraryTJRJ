@@ -1,4 +1,4 @@
-﻿namespace LibraryTJRJ.Domain.Abstractions;
+﻿namespace LibraryTJRJ.Domain.Common.Models;
 
 public abstract class Entity
 {
