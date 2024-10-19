@@ -31,9 +31,6 @@ jobs:
       - name: List files in LibraryTJRJ.Api publish directory
         run: dir ./LibraryTJRJ.Api/bin/Release/net8.0/publish
 
-      - name: List files in LibraryTJRJ.Infrastructure publish directory
-        run: dir ./LibraryTJRJ.Infrastructure/bin/Release/net8.0/publish
-
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
@@ -68,4 +65,4 @@ jobs:
         with:
           app-name: 'LibraryTJRJ'
           slot-name: 'Production'
-          package: './LibraryTJRJ.Api/bin/Release/net8.0/publish'
+          package: 'D:\a\LibraryTJRJ\LibraryTJRJ\LibraryTJRJ.Api\bin\Release\net8.0\publish'
