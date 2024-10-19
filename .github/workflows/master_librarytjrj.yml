@@ -1,37 +1,27 @@
 name: Build and deploy ASP.Net Core app to Azure Web App - LibraryTJRJ
-
 on:
   push:
     branches:
       - master
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: windows-latest
-
     steps:
       - uses: actions/checkout@v4
-
       - name: Set up .NET Core
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.x'
-
       - name: Build with dotnet
         run: dotnet build --configuration Release
-
       - name: dotnet publish for API
-        run: dotnet publish ./LibraryTJRJ.Api/LibraryTJRJ.Api.csproj -c Release -o ./LibraryTJRJ.Api/bin/Release/net8.0/publish
-
-      - name: List files in publish directory
-        run: dir ./LibraryTJRJ.Api/bin/Release/net8.0/publish
-
+        run: dotnet publish ./LibraryTJRJ.Api/LibraryTJRJ.Api.csproj -c Release -o ${{env.DOTNET_ROOT}}/myapp
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: './LibraryTJRJ.Api/bin/Release/net8.0/publish'
+          path: ${{env.DOTNET_ROOT}}/myapp
 
   deploy:
     runs-on: windows-latest
@@ -41,15 +31,14 @@ jobs:
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
       id-token: write
-
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: .net-app
       
-      - name: List files in publish directory after download
-        run: dir ./LibraryTJRJ.Api/bin/Release/net8.0/publish
+      - name: List files in the artifact directory
+        run: dir
       
       - name: Login to Azure
         uses: azure/login@v2
@@ -64,4 +53,4 @@ jobs:
         with:
           app-name: 'LibraryTJRJ'
           slot-name: 'Production'
-          package: './LibraryTJRJ.Api/bin/Release/net8.0/publish'  # Caminho relativo
+          package: '.'
