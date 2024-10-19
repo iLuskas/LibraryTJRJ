@@ -1,5 +1,4 @@
-﻿using Asp.Versioning;
-using LibraryTJRJ.Application.Common.Interfaces.Authentication;
+﻿using LibraryTJRJ.Application.Common.Interfaces.Authentication;
 using LibraryTJRJ.Application.Common.Interfaces.Services;
 using LibraryTJRJ.Domain.Authors;
 using LibraryTJRJ.Domain.Books;
@@ -39,11 +38,11 @@ public static class DependecyInjection
 
     public static IServiceCollection AddPersistence(IServiceCollection services)
     {
-        services.AddDbContext<LibraryTJRJDbContext>(options =>
-            options.UseSqlite("Data Source = app_data/LibraryTJRJ.db"));
-
         //services.AddDbContext<LibraryTJRJDbContext>(options =>
-        //    options.UseSqlite("Data Source = LibraryTJRJ.db"));
+        //    options.UseSqlite("Data Source = app_data/LibraryTJRJ.db"));
+
+        services.AddDbContext<LibraryTJRJDbContext>(options =>
+            options.UseSqlite("Data Source = LibraryTJRJ.db"));
 
         services.AddScoped<IUserRepository, UserRepository>();
         services.AddScoped<IBookRepository, BookRepository>();

@@ -21,4 +21,10 @@
     <ProjectReference Include="..\LibraryTJRJ.Infrastructure\LibraryTJRJ.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="LibraryTJRJ.db">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

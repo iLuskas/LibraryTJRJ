@@ -17,8 +17,8 @@ internal class Program
 
         var app = builder.Build();
         {
-            if (app.Environment.IsDevelopment())
-            {
+            //if (app.Environment.IsDevelopment())
+            //{
                 app.UseSwagger();
                 app.UseSwaggerUI(options =>
                 {
@@ -29,7 +29,7 @@ internal class Program
                         options.SwaggerEndpoint(url, name);
                     }
                 });
-            }
+           // }
 
             app.UseExceptionHandler("/error");
             app.UseHttpsRedirection();
