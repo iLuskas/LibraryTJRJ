@@ -1,22 +1,42 @@
+using Asp.Versioning.ApiExplorer;
 using LibraryTJRJ.Api;
 using LibraryTJRJ.Application;
 using LibraryTJRJ.Infrastructure;
 
-var builder = WebApplication.CreateBuilder(args);
+internal class Program
 {
-    builder.Services
-        .AddPresentation()
-        .AddApplication()
-        .AddInfrastructure(builder.Configuration);
-}
+    private static void Main(string[] args)
+    {
+        var builder = WebApplication.CreateBuilder(args);
+        {
+            builder.Services
+                .AddPresentation()
+                .AddApplication()
+                .AddInfrastructure(builder.Configuration);
+        }
 
-var app = builder.Build();
-{
-    app.UseExceptionHandler("/error");
-    app.UseHttpsRedirection();
-    app.UseAuthentication();
-    app.UseAuthorization();
-    app.MapControllers();
-    app.Run();
-}
+        var app = builder.Build();
+        {
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseSwagger();
+                app.UseSwaggerUI(options =>
+                {
+                    foreach (ApiVersionDescription description in app.DescribeApiVersions())
+                    {
+                        string url = $"/swagger/{description.GroupName}/swagger.json";
+                        string name = description.GroupName.ToUpperInvariant();
+                        options.SwaggerEndpoint(url, name);
+                    }
+                });
+            }
 
+            app.UseExceptionHandler("/error");
+            app.UseHttpsRedirection();
+            app.UseAuthentication();
+            app.UseAuthorization();
+            app.MapControllers();
+            app.Run();
+        }
+    }
+}

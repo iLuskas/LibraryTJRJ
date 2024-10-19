@@ -1,8 +1,8 @@
 ﻿using LibraryTJRJ.Application.Common.Exceptions;
-using LibraryTJRJ.Domain.Author;
-using LibraryTJRJ.Domain.Book;
+using LibraryTJRJ.Domain.Authors;
+using LibraryTJRJ.Domain.Books;
 using LibraryTJRJ.Domain.Common.Interfaces;
-using LibraryTJRJ.Domain.Subject;
+using LibraryTJRJ.Domain.Subjects;
 using LibraryTJRJ.Domain.User;
 using Microsoft.EntityFrameworkCore;
 using System.Data;

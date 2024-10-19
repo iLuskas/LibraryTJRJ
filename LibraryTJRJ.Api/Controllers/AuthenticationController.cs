@@ -7,23 +7,19 @@ using Microsoft.AspNetCore.Mvc;
 using LibraryTJRJ.Domain.Common.Errors;
 using LibraryTJRJ.Contracts.Authentication;
 using LibraryTJRJ.Application.Authentication.Queries.Login;
+using Asp.Versioning;
 
 namespace LibraryTJRJ.Api.Controllers;
 
 [ApiVersion(ApiVersions.V1)]
 [Route("api/v{version:apiVersion}/auth")]
 [AllowAnonymous]
-public class AuthenticationController : ApiController
+public class AuthenticationController(ISender mediator) : ApiController
 {
-    private readonly ISender _mediator;
-
-    public AuthenticationController(ISender mediator)
-    {
-        _mediator = mediator;
-    }
+    private readonly ISender _mediator = mediator;
 
     [HttpPost("register")]
-    public async Task<IActionResult> Register(RegisterRequest request)
+    public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
         var command = new RegisterCommand(
             FirstName: request.FirstName,
@@ -48,7 +44,7 @@ public class AuthenticationController : ApiController
     }
 
     [HttpPost("login")]
-    public async Task<IActionResult> Login(LoginRequest request)
+    public async Task<IActionResult> Login([FromBody] LoginRequest request)
     {
         var query = new LoginQuery(
             Email: request.Email,

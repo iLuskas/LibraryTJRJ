@@ -8,14 +8,9 @@ using System.Diagnostics;
 
 namespace LibraryTJRJ.Api.Common.ErrorsBehavior;
 
-public class LibraryTJRJProblemDetailsFactory : ProblemDetailsFactory
+public class LibraryTJRJProblemDetailsFactory(IOptions<ApiBehaviorOptions> options) : ProblemDetailsFactory
 {
-    private readonly ApiBehaviorOptions _options;
-
-    public LibraryTJRJProblemDetailsFactory(IOptions<ApiBehaviorOptions> options)
-    {
-        _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
-    }
+    private readonly ApiBehaviorOptions _options = options?.Value ?? throw new ArgumentNullException(nameof(options));
 
     public override ProblemDetails CreateProblemDetails(
         HttpContext httpContext,
@@ -50,8 +45,7 @@ public class LibraryTJRJProblemDetailsFactory : ProblemDetailsFactory
         string? detail = null,
         string? instance = null)
     {
-        if (modelStateDictionary == null)
-            throw new ArgumentNullException(nameof(modelStateDictionary));
+        ArgumentNullException.ThrowIfNull(modelStateDictionary);
 
         statusCode ??= 400;
 
@@ -93,13 +87,13 @@ public class LibraryTJRJProblemDetailsFactory : ProblemDetailsFactory
         AddErrorCodes(httpContext, problemDetails);
     }
 
-    private void AddTraceId(HttpContext httpContext, ProblemDetails problemDetails)
+    private static void AddTraceId(HttpContext httpContext, ProblemDetails problemDetails)
     {
         var traceId = Activity.Current?.Id ?? httpContext.TraceIdentifier ?? Guid.NewGuid().ToString();
         problemDetails.Extensions["traceId"] = traceId;
     }
 
-    private void AddErrorCodes(HttpContext httpContext, ProblemDetails problemDetails)
+    private static void AddErrorCodes(HttpContext httpContext, ProblemDetails problemDetails)
     {
         var errors = httpContext.Items[HttpContextItemKeys.Errors] as List<Error>;
 

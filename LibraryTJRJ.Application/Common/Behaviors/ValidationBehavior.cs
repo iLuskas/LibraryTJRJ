@@ -1,14 +1,13 @@
 ﻿using ErrorOr;
 using FluentValidation;
-using LibraryTJRJ.Application.Common.Interfaces.Messaging;
 using MediatR;
 
 namespace LibraryTJRJ.Application.Common.Behaviors;
 
-public class ValidationBehavior<TRequest, TResponse>(IValidator<TRequest>? validator = null) :
+public sealed class ValidationBehavior<TRequest, TResponse>(IValidator<TRequest>? validator = null) :
     IPipelineBehavior<TRequest, TResponse>
     where TRequest : IRequest<TResponse>
-    where TResponse : IBaseCommand
+    where TResponse : IErrorOr
 {
     private readonly IValidator<TRequest>? _validator = validator;
 
