@@ -26,16 +26,19 @@ jobs:
         run: dotnet build --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish -c Release 
+        run: dotnet publish -c Release
 
-      - name: List files in publish directory
-        run: dir ./bin/Release/net8.0/publish  # Verifica os arquivos publicados
+      - name: List files in LibraryTJRJ.Api publish directory
+        run: dir ./LibraryTJRJ.Api/bin/Release/net8.0/publish
+
+      - name: List files in LibraryTJRJ.Infrastructure publish directory
+        run: dir ./LibraryTJRJ.Infrastructure/bin/Release/net8.0/publish
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: './bin/**/*/publish'  # Ajuste aqui
+          path: './LibraryTJRJ.Api/bin/Release/net8.0/publish'  # Ajuste conforme necessário
 
   deploy:
     runs-on: windows-latest
@@ -65,4 +68,4 @@ jobs:
         with:
           app-name: 'LibraryTJRJ'
           slot-name: 'Production'
-          package: '${{ github.workspace }}/bin/Release/net8.0/publish'  # Atualizar o caminho
+          package: '${{ github.workspace }}/LibraryTJRJ.Api/bin/Release/net8.0/publish'  # Ajuste aqui
