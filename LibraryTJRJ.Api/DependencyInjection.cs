@@ -10,6 +10,14 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddPresentation(this IServiceCollection services)
     {
+        services.AddCors(options =>
+        {
+            options.AddPolicy("AllowAllOrigins",
+                builder => builder.AllowAnyOrigin()  // Permite todas as origens
+                                  .AllowAnyMethod()  // Permite todos os métodos (GET, POST, etc.)
+                                  .AllowAnyHeader()); // Permite todos os cabeçalhos
+        });
+
         services.AddControllers();
 
         services.AddEndpointsApiExplorer();
