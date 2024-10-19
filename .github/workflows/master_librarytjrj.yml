@@ -38,7 +38,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: .net-app
-          path: './LibraryTJRJ.Api/bin/Release/net8.0/publish'  # Ajuste conforme necessário
+          path: './LibraryTJRJ.Api/bin/Release/net8.0/publish'
 
   deploy:
     runs-on: windows-latest
@@ -68,4 +68,4 @@ jobs:
         with:
           app-name: 'LibraryTJRJ'
           slot-name: 'Production'
-          package: '${{ github.workspace }}/LibraryTJRJ.Api/bin/Release/net8.0/publish'  # Ajuste aqui
+          package: './LibraryTJRJ.Api/bin/Release/net8.0/publish'
