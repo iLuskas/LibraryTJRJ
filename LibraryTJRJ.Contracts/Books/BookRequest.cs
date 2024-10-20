@@ -4,4 +4,6 @@ public record BookRequest(
     string Title,
     string Publisher,
     int Edition,
-    string YearPublication);
+    string YearPublication,
+    List<Guid> AuthorIds,
+    List<Guid> SubjectIds);

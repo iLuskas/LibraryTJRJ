@@ -1,4 +1,5 @@
 ﻿using ErrorOr;
+using LibraryTJRJ.Domain.Common.Models;
 
 namespace LibraryTJRJ.Domain.Books;
 
@@ -11,4 +12,6 @@ public interface IBookRepository
     Task<bool> ExistsAsync(Guid id);
     Task UpdateBookAsync(Book book);
     Task RemoveBookAsync(Book book);
+    Task<PagedResponseOffset<Book>> GetWithOffsetPagination(int pageNumber, int pageSize);
+
 }

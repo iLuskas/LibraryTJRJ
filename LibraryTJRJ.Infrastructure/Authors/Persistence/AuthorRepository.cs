@@ -36,6 +36,13 @@ public class AuthorRepository(LibraryTJRJDbContext dbContext) : IAuthorRepositor
         return await _dbContext.Authors.FirstOrDefaultAsync(author => author.Id == id);
     }
 
+    public async Task<List<Author>> GetByIdsAsync(List<Guid> authorIds)
+    {
+        return await _dbContext.Authors
+            .Where(author => authorIds.Contains(author.Id))
+            .ToListAsync();
+    }
+
     public Task RemoveAuthorAsync(Author author)
     {
         _dbContext.Authors.Remove(author);

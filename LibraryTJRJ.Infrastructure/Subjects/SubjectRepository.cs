@@ -36,6 +36,13 @@ namespace LibraryTJRJ.Infrastructure.Subjects
             return await _dbContext.Subjects.FirstOrDefaultAsync(subject => subject.Id == id);
         }
 
+        public async Task<List<Subject>> GetByIdsAsync(List<Guid> subjectIds)
+        {
+            return await _dbContext.Subjects
+                .Where(author => subjectIds.Contains(author.Id))
+                .ToListAsync();
+        }
+
         public Task RemoveSubjectAsync(Subject subject)
         {
             _dbContext.Subjects.Remove(subject);

@@ -1,4 +1,5 @@
 ﻿using LibraryTJRJ.Domain.Books;
+using LibraryTJRJ.Domain.Common.Models;
 using LibraryTJRJ.Infrastructure.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,7 +21,10 @@ public class BookRepository(LibraryTJRJDbContext dbContext) : IBookRepository
 
     public async Task<List<Book>> GetAllAsync()
     {
-        return await _dbContext.Books.ToListAsync();
+        return await _dbContext.Books
+            .Include(book => book.Authors)
+            .Include(book => book.Subjects)
+            .ToListAsync();
     }
 
     public async Task<List<Book>> GetAllByAuthorAsync(Guid authorId)
@@ -34,6 +38,23 @@ public class BookRepository(LibraryTJRJDbContext dbContext) : IBookRepository
     public async Task<Book?> GetByIdAsync(Guid id)
     {
         return await _dbContext.Books.FirstOrDefaultAsync(book => book.Id == id);
+    }
+
+    public async Task<PagedResponseOffset<Book>> GetWithOffsetPagination(int pageNumber, int pageSize)
+    {
+        var totalRecords = await _dbContext.Books.AsNoTracking().CountAsync();
+
+        var entities = await _dbContext.Books.AsNoTracking()
+            .Include(book => book.Authors)
+            .Include(book => book.Subjects)
+            .OrderBy(x => x.Id)
+            .Skip((pageNumber - 1) * pageSize)
+            .Take(pageSize)
+            .ToListAsync();
+
+        var pagedResponse = new PagedResponseOffset<Book>(entities, pageNumber, pageSize, totalRecords);
+
+        return pagedResponse;
     }
 
     public Task RemoveBookAsync(Book book)

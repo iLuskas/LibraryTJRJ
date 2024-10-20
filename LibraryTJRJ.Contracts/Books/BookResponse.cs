@@ -5,4 +5,6 @@ public record BookResponse(
     string Title,
     string Publisher,
     int Edition,
-    string YearPublication);
+    string YearPublication,
+    List<string> Authors,
+    List<string> Subjects);

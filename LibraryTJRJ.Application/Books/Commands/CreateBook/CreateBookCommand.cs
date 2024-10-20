@@ -7,4 +7,6 @@ public record CreateBookCommand(
     string Title,
     string Publisher,
     int Edition,
-    string YearPublication) : ICommand<Book>;
+    string YearPublication,
+    List<Guid> AuthorIds,
+    List<Guid> SubjectIds) : ICommand<Book>;

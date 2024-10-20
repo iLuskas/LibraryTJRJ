@@ -8,6 +8,8 @@ public record UpdateBookCommand(
     string Title,
     string Publisher,
     int Edition,
-    string YearPublication) : ICommand<Updated>;
+    string YearPublication,
+    List<Guid> AuthorIds,
+    List<Guid> SubjectIds) : ICommand<Updated>;
 
 

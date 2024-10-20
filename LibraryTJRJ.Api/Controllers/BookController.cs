@@ -6,6 +6,7 @@ using LibraryTJRJ.Application.Books.Queries.GetBook;
 using LibraryTJRJ.Application.Books.Queries.ListBooks;
 using LibraryTJRJ.Application.Books.Queries.ListBooksByAuthor;
 using LibraryTJRJ.Contracts.Books;
+using LibraryTJRJ.Contracts.Common;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,7 +26,9 @@ namespace LibraryTJRJ.Api.Controllers
                     request.Title,
                     request.Publisher,
                     request.Edition,
-                    request.YearPublication
+                    request.YearPublication,
+                    request.AuthorIds,
+                    request.SubjectIds
                 )
             );
 
@@ -33,7 +36,14 @@ namespace LibraryTJRJ.Api.Controllers
                 book => CreatedAtAction(
                     nameof(GetBook),
                     new { BookId = book.Id },
-                    new BookResponse(book.Id, book.Title, book.Publisher, book.Edition, book.YearPublication)),
+                    new BookResponse(
+                        book.Id,
+                        book.Title,
+                        book.Publisher,
+                        book.Edition,
+                        book.YearPublication,
+                        book.Authors.Select(a => a.Name).ToList(),
+                        book.Subjects.Select(s => s.Description).ToList())),
                 Problem);
         }
 
@@ -45,7 +55,9 @@ namespace LibraryTJRJ.Api.Controllers
                         request.Title,
                         request.Publisher,
                         request.Edition,
-                        request.YearPublication
+                        request.YearPublication,
+                        request.AuthorIds,
+                        request.SubjectIds
             );
 
             var result = await _sender.Send(command);
@@ -70,13 +82,35 @@ namespace LibraryTJRJ.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ListBooks()
+        public async Task<IActionResult> ListBooks([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 1)
         {
-            var listBooksResult = await _sender.Send(new ListBooksQuery());
+            var listBooksResult = await _sender.Send(new ListBooksQuery(pageNumber, pageSize));
 
             return listBooksResult.Match(
-                books => Ok(books.ConvertAll(book => new BookResponse(book.Id, book.Title, book.Publisher, book.Edition, book.YearPublication))),
-                Problem);
+                 books =>
+                 {
+                     var totalRecords = books.TotalRecords;
+                     var totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+
+                     var pagedResponse = new PagedResponse<BookResponse>
+                     {
+                         PageNumber = pageNumber,
+                         PageSize = pageSize,
+                         TotalRecords = totalRecords,
+                         TotalPages = totalPages,
+                         Data = books.Data.ConvertAll(book => new BookResponse(
+                             book.Id,
+                             book.Title,
+                             book.Publisher,
+                             book.Edition,
+                             book.YearPublication,
+                             book.Authors.Select(a => a.Name).ToList(),
+                             book.Subjects.Select(s => s.Description).ToList()))
+                     };
+
+                     return Ok(pagedResponse);
+                 },
+                 Problem);
         }
 
         [HttpGet("{bookId:guid}")]
@@ -87,7 +121,14 @@ namespace LibraryTJRJ.Api.Controllers
             var getBookResult = await _sender.Send(command);
 
             return getBookResult.Match(
-                book => Ok(new BookResponse(book.Id, book.Title, book.Publisher, book.Edition, book.YearPublication)),
+                book => Ok(new BookResponse(
+                    book.Id,
+                    book.Title,
+                    book.Publisher,
+                    book.Edition,
+                    book.YearPublication,
+                    book.Authors.Select(a => a.Name).ToList(),
+                    book.Subjects.Select(s => s.Description).ToList())),
                 Problem);
         }
 
@@ -98,7 +139,14 @@ namespace LibraryTJRJ.Api.Controllers
 
             return booksResult.Match(
                 books => Ok(books.ConvertAll(book => 
-                    new BookResponse(book.Id, book.Title, book.Publisher, book.Edition, book.YearPublication))
+                    new BookResponse(
+                        book.Id,
+                        book.Title,
+                        book.Publisher,
+                        book.Edition,
+                        book.YearPublication,
+                        book.Authors.Select(a => a.Name).ToList(),
+                        book.Subjects.Select(s => s.Description).ToList()))
                 ),
                 Problem);
         }
