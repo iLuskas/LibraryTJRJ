@@ -1,0 +1,9 @@
+{
+  "dependencies": {
+    "apis2": {
+      "apiEndpoint": "https://librarytjrjapiapi.azure-api.net/LibraryTJRJ",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.ApiManagement/service/LibraryTJRJApiapi/apis/LibraryTJRJApi",
+      "type": "apis.azure"
+    }
+  }
+}
