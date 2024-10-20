@@ -33,7 +33,14 @@ internal class Program
 
             app.UseExceptionHandler("/error");
             app.UseHttpsRedirection();
-            app.UseCors("AllowAllOrigins");
+
+            app.UseRouting();
+
+            app.UseCors(x => x
+                            .AllowAnyOrigin()
+                            .AllowAnyMethod()
+                            .AllowAnyHeader());
+
             app.UseAuthentication();
             app.UseAuthorization();
             app.MapControllers();
