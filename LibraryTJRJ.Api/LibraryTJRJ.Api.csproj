@@ -23,7 +23,7 @@
 
   <ItemGroup>
     <None Update="LibraryTJRJ.db">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

@@ -90,7 +90,7 @@ namespace LibraryTJRJ.Api.Controllers
                  books =>
                  {
                      var totalRecords = books.TotalRecords;
-                     var totalPages = (int)Math.Ceiling((double)totalRecords / pageSize);
+                     var totalPages = books.TotalPages;
 
                      var pagedResponse = new PagedResponse<BookResponse>
                      {
