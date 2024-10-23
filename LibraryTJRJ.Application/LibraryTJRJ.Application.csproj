@@ -15,6 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\LibraryTJRJ.Contracts\LibraryTJRJ.Contracts.csproj" />
     <ProjectReference Include="..\LibraryTJRJ.Domain\LibraryTJRJ.Domain.csproj" />
   </ItemGroup>
 

@@ -82,34 +82,18 @@ namespace LibraryTJRJ.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> ListBooks([FromQuery] int pageNumber = 1, [FromQuery] int pageSize = 1)
+        public async Task<IActionResult> ListBooks([FromQuery] BookParameters bookParameters)
         {
-            var listBooksResult = await _sender.Send(new ListBooksQuery(pageNumber, pageSize));
+            var listBooksResult = await _sender.Send(
+                new ListBooksQuery(bookParameters.PageNumber, 
+                                   bookParameters.PageSize,
+                                   bookParameters.SerachTerm,
+                                   bookParameters.SortColumn,
+                                   bookParameters.SortOrder)
+            );
 
             return listBooksResult.Match(
-                 books =>
-                 {
-                     var totalRecords = books.TotalRecords;
-                     var totalPages = books.TotalPages;
-
-                     var pagedResponse = new PagedResponse<BookResponse>
-                     {
-                         PageNumber = pageNumber,
-                         PageSize = pageSize,
-                         TotalRecords = totalRecords,
-                         TotalPages = totalPages,
-                         Data = books.Data.ConvertAll(book => new BookResponse(
-                             book.Id,
-                             book.Title,
-                             book.Publisher,
-                             book.Edition,
-                             book.YearPublication,
-                             book.Authors.Select(a => a.Name).ToList(),
-                             book.Subjects.Select(s => s.Description).ToList()))
-                     };
-
-                     return Ok(pagedResponse);
-                 },
+                 books => Ok(listBooksResult.Value),
                  Problem);
         }
 

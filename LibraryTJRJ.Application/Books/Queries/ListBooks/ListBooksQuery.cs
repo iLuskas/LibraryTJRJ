@@ -1,7 +1,7 @@
 ﻿using LibraryTJRJ.Application.Common.Interfaces.Messaging;
-using LibraryTJRJ.Domain.Books;
-using LibraryTJRJ.Domain.Common.Models;
+using LibraryTJRJ.Contracts.Books;
+using LibraryTJRJ.Contracts.Common;
 
 namespace LibraryTJRJ.Application.Books.Queries.ListBooks;
 
-public record ListBooksQuery(int PageNumber, int PageSize) : IQuery<PagedResponseOffset<Book>>;
+public record ListBooksQuery(int PageNumber, int PageSize, string? SearchTerm, string? SortColumn, string? SortOrder) : IQuery<PagedResponse<BookResponse>>;

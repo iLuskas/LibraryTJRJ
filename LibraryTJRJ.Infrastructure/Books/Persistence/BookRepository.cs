@@ -2,6 +2,7 @@
 using LibraryTJRJ.Domain.Common.Models;
 using LibraryTJRJ.Infrastructure.Common.Persistence;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace LibraryTJRJ.Infrastructure.Books.Persistence;
 
@@ -40,14 +41,37 @@ public class BookRepository(LibraryTJRJDbContext dbContext) : IBookRepository
         return await _dbContext.Books.FirstOrDefaultAsync(book => book.Id == id);
     }
 
-    public async Task<PagedResponseOffset<Book>> GetWithOffsetPagination(int pageNumber, int pageSize)
+    public async Task<PagedResponseOffset<Book>> GetWithOffsetPagination(
+        int pageNumber,
+        int pageSize,
+        string? searchTerm,
+        Expression<Func<Book, object>> sortExpression,
+        string? sortOrder)
     {
-        var totalRecords = await _dbContext.Books.AsNoTracking().CountAsync();
+        var query = _dbContext.Books.AsNoTracking()
+                   .Include(book => book.Authors)
+                   .Include(book => book.Subjects)
+                   .AsQueryable();
 
-        var entities = await _dbContext.Books.AsNoTracking()
-            .Include(book => book.Authors)
-            .Include(book => book.Subjects)
-            .OrderBy(x => x.Id)
+        if (!string.IsNullOrWhiteSpace(searchTerm))
+        {
+            query = query.Where(book =>
+                book.Title.Contains(searchTerm) ||
+                book.Publisher.Contains(searchTerm) ||
+                book.YearPublication.Contains(searchTerm) ||
+                book.Authors.Any(author => author.Name.Contains(searchTerm))
+            );
+        }
+
+        query = sortOrder?.ToLower() switch
+        {
+            "desc" => query.OrderByDescending(sortExpression),
+            _ => query.OrderBy(sortExpression)
+        };
+
+        var totalRecords = await query.CountAsync();
+
+        var entities = await query
             .Skip((pageNumber - 1) * pageSize)
             .Take(pageSize)
             .ToListAsync();
